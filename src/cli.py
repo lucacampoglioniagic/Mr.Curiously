@@ -74,7 +74,29 @@ def cmd_test_instagram():
         click.echo(f"Vai su https://www.instagram.com/{cfg.ig_username}")
 
 
-@cli.command("schedule")
+@cli.command("profile-image")
+@click.option("--output", default="profile.png", help="Percorso file output (default: profile.png)")
+@click.option("--upload", is_flag=True, help="Carica anche su R2")
+def cmd_profile_image(output: str, upload: bool):
+    """Genera l'immagine profilo Instagram e la salva in locale."""
+    from src.generators.profile import generate_profile_image
+
+    click.echo("Generazione immagine profilo...")
+    image_bytes = generate_profile_image()
+    with open(output, "wb") as f:
+        f.write(image_bytes)
+    click.echo(click.style(f"Salvata: {output} ({len(image_bytes):,} bytes)", fg="green"))
+
+    if upload:
+        from src.storage.r2 import upload_image
+        cfg = load_config()
+        result = upload_image(cfg, image_bytes, "profile/profile.png", content_type="image/png")
+        click.echo(f"Caricata su R2: {result.public_url}")
+
+    click.echo("Carica manualmente su Instagram: Impostazioni → Modifica profilo → Foto profilo")
+
+
+
 def cmd_schedule():
     """Avvia lo scheduler giornaliero (09:00 ogni giorno)."""
     from src.scheduler.daily import run_scheduler
