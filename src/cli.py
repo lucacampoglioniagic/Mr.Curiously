@@ -113,6 +113,29 @@ def cmd_test_video(fact: str | None, output: str):
     click.echo(click.style(f"Video salvato: {path}", fg="green"))
 
 
+@cli.command("test-tiktok")
+def cmd_test_tiktok():
+    """Genera un video di test e lo pubblica su TikTok."""
+    from src.generators.video import generate_video
+    from src.generators.caption import _mock_caption
+    from src.publishers.tiktok import publish_video
+    import tempfile
+
+    cfg = load_config()
+    caption_result = _mock_caption([])
+
+    click.echo(f"Fatto: {caption_result.fact[:60]}...")
+    click.echo("Generazione video...")
+    with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as tmp:
+        video_path = tmp.name
+    generate_video(caption_result.fact, output_path=video_path)
+    click.echo(f"Video: {video_path}")
+
+    click.echo("Pubblicazione su TikTok...")
+    result = publish_video(cfg, video_path, caption_result.full_caption)
+    click.echo(click.style(f"Pubblicato! publish_id={result.publish_id}", fg="green"))
+
+
 @cli.command("schedule")
 def cmd_schedule():
     """Avvia lo scheduler giornaliero (09:00 ogni giorno)."""
