@@ -96,7 +96,24 @@ def cmd_profile_image(output: str, upload: bool):
     click.echo("Carica manualmente su Instagram: Impostazioni → Modifica profilo → Foto profilo")
 
 
+@cli.command("test-video")
+@click.option("--fact", default=None, help="Fatto da animare (default: usa mock)")
+@click.option("--output", default="test_video.mp4", help="File output (default: test_video.mp4)")
+def cmd_test_video(fact: str | None, output: str):
+    """Genera un video TikTok di test con effetto typewriter."""
+    from src.generators.video import generate_video
+    from src.generators.caption import _mock_caption
 
+    if not fact:
+        result = _mock_caption([])
+        fact = result.fact
+
+    click.echo(f"Generazione video per: {fact[:60]}...")
+    path = generate_video(fact, output_path=output)
+    click.echo(click.style(f"Video salvato: {path}", fg="green"))
+
+
+@cli.command("schedule")
 def cmd_schedule():
     """Avvia lo scheduler giornaliero (09:00 ogni giorno)."""
     from src.scheduler.daily import run_scheduler
