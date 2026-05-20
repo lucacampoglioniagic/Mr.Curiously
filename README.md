@@ -5,6 +5,7 @@ Pipeline automatica che ogni giorno:
 2. Genera un'immagine 1080×1080 (Pillow branded o DALL-E 3)
 3. Carica il media su Cloudflare R2
 4. Pubblica su Instagram
+5. *(in arrivo)* Pubblica su TikTok
 
 ## Setup
 
@@ -38,6 +39,10 @@ python -m src.cli test-instagram
 | `IG_USERNAME` | ⬜ | Handle Instagram (usato solo nel log) |
 | `OPENAI_API_KEY` | ⬜ | Abilita caption GPT-4o-mini + immagini DALL-E 3 |
 | `ANTHROPIC_API_KEY` | ⬜ | Fallback caption con Claude Haiku |
+| `TIKTOK_CLIENT_KEY` | ⬜ | App key TikTok Developer Portal |
+| `TIKTOK_CLIENT_SECRET` | ⬜ | App secret TikTok Developer Portal |
+| `TIKTOK_ACCESS_TOKEN` | ⬜ | Token OAuth TikTok (ottenuto via `tiktok_oauth.py`) |
+| `TIKTOK_OPEN_ID` | ⬜ | Open ID utente TikTok (ottenuto via `tiktok_oauth.py`) |
 
 > Se nessuna API key AI è configurata, la pipeline usa un pool di 15 fatti mock rotativi.
 
@@ -52,6 +57,9 @@ python -m src.cli dry-run
 
 # Test end-to-end: immagine → R2 → Instagram
 python -m src.cli test-instagram
+
+# Test pubblicazione TikTok (disponibile dopo approvazione app)
+python -m src.cli test-tiktok
 
 # Avvia lo scheduler giornaliero (pubblica alle 09:00)
 python -m src.cli schedule
@@ -105,3 +113,49 @@ Il workflow `.github/workflows/daily.yml` pubblica automaticamente alle **09:00 
 ### Nota sui font (Pillow)
 
 Il renderer Pillow usa font di sistema (Arial su Windows, DejaVu/Liberation su Linux). **Non supporta emoji Unicode** — caratteri come `🧠` vengono renderizzati come quadratini (`□`). Nel testo delle immagini si usano solo caratteri ASCII.
+
+---
+
+## TikTok Setup
+
+> **Stato attuale: App in review ⏳** — in attesa di approvazione TikTok (1–7 giorni lavorativi).
+
+### Come funziona il flusso OAuth
+
+Lo script `tiktok_oauth.py` implementa un server locale OAuth su **porta 8080** che:
+1. Reindirizza l'utente a TikTok per l'autorizzazione
+2. Riceve il callback con il `code`
+3. Scambia il `code` con `access_token` + `open_id`
+4. Salva i token automaticamente nel `.env`
+
+### Setup iniziale (da completare dopo approvazione app)
+
+```bash
+# 1. Assicurarsi che TIKTOK_CLIENT_KEY e TIKTOK_CLIENT_SECRET siano nel .env
+
+# 2. Avviare ngrok per creare un tunnel HTTPS verso localhost:8080
+ngrok http 8080
+# Copiare l'URL HTTPS generato (es. https://xxxx.ngrok-free.dev)
+
+# 3. Aggiornare REDIRECT_URI in tiktok_oauth.py con il nuovo URL ngrok
+#    Aggiungere lo stesso URL nel TikTok Developer Portal → Login Kit → Redirect URIs
+
+# 4. Avviare il server OAuth
+python tiktok_oauth.py
+
+# 5. Aprire http://localhost:8080 nel browser e completare il flusso
+# → TIKTOK_ACCESS_TOKEN e TIKTOK_OPEN_ID vengono salvati automaticamente nel .env
+```
+
+> ⚠️ **Nota ngrok free**: l'URL HTTPS cambia ad ogni riavvio di ngrok. Per un redirect URI stabile, considera ngrok a pagamento o un dominio fisso.
+
+### Secrets GitHub Actions da aggiungere
+
+Dopo aver ottenuto i token, aggiungere in **Settings → Secrets and variables → Actions**:
+
+| Secret | Descrizione |
+|---|---|
+| `TIKTOK_CLIENT_KEY` | App key dal Developer Portal |
+| `TIKTOK_CLIENT_SECRET` | App secret dal Developer Portal |
+| `TIKTOK_ACCESS_TOKEN` | Token OAuth (da `tiktok_oauth.py`) |
+| `TIKTOK_OPEN_ID` | Open ID utente (da `tiktok_oauth.py`) |
