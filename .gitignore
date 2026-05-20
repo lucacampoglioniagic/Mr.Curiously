@@ -1,0 +1,32 @@
+# Secrets
+.env
+*.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+
+# Generated media (locali, prima dell'upload)
+output/
+tmp/
+*.png
+*.jpg
+*.jpeg
+*.mp4
+*.mov
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log
+logs/
