@@ -9,6 +9,7 @@ from src.generators.caption import generate_caption
 from src.generators.image import generate_image
 from src.publishers.instagram import publish_image
 from src.storage.r2 import upload_image
+from src.storage.history import get_recent_facts, add_to_history
 
 
 def run_pipeline(cfg: Config | None = None, dry_run: bool = False) -> dict:
@@ -28,7 +29,10 @@ def run_pipeline(cfg: Config | None = None, dry_run: bool = False) -> dict:
     results: dict = {}
 
     print("[1/4] Generazione caption...")
-    caption_result = generate_caption(cfg)
+    recent = get_recent_facts(cfg)
+    if recent:
+        print(f"      Storico: {len(recent)} fatti precedenti caricati da R2.")
+    caption_result = generate_caption(cfg, recent_facts=recent)
     results["caption"] = caption_result
     print(f"      Fatto: {caption_result.fact}")
 
@@ -55,6 +59,9 @@ def run_pipeline(cfg: Config | None = None, dry_run: bool = False) -> dict:
     results["media_id"] = publish_result.media_id
     results["published"] = True
     print(f"      Pubblicato! media_id={publish_result.media_id}")
+
+    add_to_history(cfg, caption_result.fact, publish_result.media_id)
+    print("      Storico aggiornato su R2.")
     if cfg.ig_username:
         print(f"      Vai su https://www.instagram.com/{cfg.ig_username}")
 
