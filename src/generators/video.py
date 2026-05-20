@@ -19,8 +19,8 @@ ACCENT = (80, 140, 255)
 TEXT_PRIMARY = (220, 230, 255)
 TEXT_DIM = (140, 170, 220)
 
-# Durata per parola (secondi)
-WORD_DURATION = 0.35
+# Durata per carattere (secondi)
+CHAR_DURATION = 0.06
 # Pausa finale a schermo pieno (secondi)
 HOLD_DURATION = 3.0
 # Frame rate
@@ -97,23 +97,22 @@ def _build_base_frame(particles: list[tuple]) -> Image.Image:
     return img
 
 
-def _render_frame(base: Image.Image, words: list[str], visible_count: int) -> np.ndarray:
-    """Renderizza un frame con le prime visible_count parole visibili."""
+def _render_frame(base: Image.Image, text: str, visible_count: int) -> np.ndarray:
+    """Renderizza un frame con i primi visible_count caratteri visibili."""
     img = base.copy()
     d = ImageDraw.Draw(img)
 
     font_fact = _load_font("arialbd.ttf", 62)
-    visible_text = " ".join(words[:visible_count])
+    visible_text = text[:visible_count]
     wrapped = textwrap.fill(visible_text, width=20)
 
-    # Calcola posizione verticale centrata nella zona testo
     text_y_start = 240
     d.multiline_text((60, text_y_start), wrapped, fill=TEXT_PRIMARY, font=font_fact, spacing=24)
 
-    # Cursore lampeggiante sull'ultima parola
-    if visible_count < len(words):
+    # Cursore lampeggiante alla fine del testo corrente
+    if visible_count < len(text):
         bbox = d.textbbox((60, text_y_start), wrapped, font=font_fact, spacing=24)
-        cursor_x = min(bbox[2] + 8, WIDTH - 60)
+        cursor_x = min(bbox[2] + 6, WIDTH - 60)
         cursor_y = bbox[3] - 55
         d.rectangle([(cursor_x, cursor_y), (cursor_x + 5, cursor_y + 52)], fill=ACCENT)
 
@@ -122,7 +121,7 @@ def _render_frame(base: Image.Image, words: list[str], visible_count: int) -> np
 
 def generate_video(fact: str, output_path: str | None = None) -> str:
     """
-    Genera un video MP4 con effetto typewriter.
+    Genera un video MP4 con effetto typewriter lettera per lettera.
     Se output_path e None, salva in un file temporaneo.
     Ritorna il percorso del file MP4 generato.
     """
@@ -133,7 +132,6 @@ def generate_video(fact: str, output_path: str | None = None) -> str:
         output_path = tmp.name
         tmp.close()
 
-    # Genera particelle fisse (stesse per tutti i frame)
     rng = random.Random(13)
     particles = [
         (rng.randint(0, WIDTH), rng.randint(0, HEIGHT),
@@ -142,18 +140,16 @@ def generate_video(fact: str, output_path: str | None = None) -> str:
     ]
 
     base = _build_base_frame(particles)
-    words = fact.split()
     frames = []
 
-    # Fase 1: parole appaiono una alla volta
-    for i in range(1, len(words) + 1):
-        frame = _render_frame(base, words, i)
-        # Ogni parola dura WORD_DURATION secondi
-        n_frames = max(1, int(WORD_DURATION * FPS))
+    # Fase 1: caratteri appaiono uno alla volta
+    for i in range(1, len(fact) + 1):
+        frame = _render_frame(base, fact, i)
+        n_frames = max(1, int(CHAR_DURATION * FPS))
         frames.extend([frame] * n_frames)
 
     # Fase 2: testo completo visibile per HOLD_DURATION secondi
-    full_frame = _render_frame(base, words, len(words))
+    full_frame = _render_frame(base, fact, len(fact))
     frames.extend([full_frame] * int(HOLD_DURATION * FPS))
 
     clip = ImageSequenceClip(frames, fps=FPS)
