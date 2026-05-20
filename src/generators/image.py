@@ -17,10 +17,24 @@ SIZE = (1080, 1080)
 
 
 def _load_font(path: str, size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
-    try:
-        return ImageFont.truetype(path, size)
-    except Exception:
-        return ImageFont.load_default()
+    # Fallback chain: font richiesto → equivalenti Linux → default
+    candidates = [
+        path,
+        path.replace("arialbd.ttf", "DejaVuSans-Bold.ttf"),
+        path.replace("arial.ttf", "DejaVuSans.ttf"),
+        path.replace("arialbd.ttf", "LiberationSans-Bold.ttf"),
+        path.replace("arial.ttf", "LiberationSans-Regular.ttf"),
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+    ]
+    for candidate in candidates:
+        try:
+            return ImageFont.truetype(candidate, size)
+        except Exception:
+            continue
+    return ImageFont.load_default(size=size) if hasattr(ImageFont, "load_default") else ImageFont.load_default()
 
 
 def generate_image(fact: str, image_prompt: str = "", cfg: Config | None = None) -> bytes:
