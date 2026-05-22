@@ -121,7 +121,8 @@ class CaptionResult:
 
     @property
     def full_caption(self) -> str:
-        tags = " ".join(f"#{t.lstrip('#')}" for t in self.hashtags)
+        all_tags = list(self.hashtags) + ["AIGenerated"]
+        tags = " ".join(f"#{t.lstrip('#')}" for t in all_tags)
         return f"{self.caption}\n\n{tags}"
 
 

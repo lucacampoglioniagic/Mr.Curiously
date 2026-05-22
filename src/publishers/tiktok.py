@@ -60,6 +60,7 @@ def _init_upload(cfg: Config, caption: str, video_size: int) -> tuple[str, str]:
             "disable_duet": False,
             "disable_comment": False,
             "disable_stitch": False,
+            "ai_generated_content": True,  # required by TikTok policy for AI-generated content
         },
         "source_info": {
             "source": "FILE_UPLOAD",
