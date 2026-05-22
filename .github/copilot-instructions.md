@@ -25,21 +25,21 @@ src/
 │   └── profile.py     # Immagine profilo
 ├── publishers/
 │   ├── instagram.py   # Graph API v21.0
-│   └── tiktok.py      # Content Posting API v2 (con ai_generated_content: true)
+│   └── tiktok.py      # Content Posting API v2 (ai_generated_content: true)
 ├── storage/
 │   ├── r2.py          # Upload su Cloudflare R2
 │   └── history.py     # Anti-ripetizione su R2 (max 60 voci)
 └── scheduler/
     └── daily.py       # Pipeline 5 step
-docs/                  # GitHub Pages — sito legale + OAuth entry point
+docs/                  # GitHub Pages: sito legale (Privacy, Terms) + OAuth entry point TikTok
 ```
 
 ## Convenzioni
-- Lingua: **italiano** per fatto/caption, **inglese** per image_prompt e codice/commenti
-- Tutti i post includono `#AIGenerated` (policy TikTok e Meta)
-- TikTok publisher usa `ai_generated_content: True` nel payload API
-- I segreti non vanno mai nel codice — usare `.env` locale o GitHub Secrets
-- Il TikTok publisher salta silenziosamente se `TIKTOK_ACCESS_TOKEN` non è configurato
+- **Lingua contenuto**: fatto e caption in italiano; `image_prompt` in inglese. I nomi di variabili, commenti nel codice e docstring sono in inglese.
+- **Label AI obbligatorie**: tutti i post includono `#AIGenerated` nell'hashtag (Instagram) e `ai_generated_content: True` nel payload TikTok. Non rimuovere questi campi.
+- **Credenziali**: non inserire mai secrets, token o chiavi API nel codice sorgente. Usare sempre `.env` locale (non committato) o GitHub Actions Secrets.
+- **TikTok opzionale**: il publisher TikTok si attiva solo se `TIKTOK_ACCESS_TOKEN` è presente nel config. Se mancante, la pipeline continua senza errori pubblicando solo su Instagram.
+- **Sito docs/**: le pagine in `docs/` sono servite da GitHub Pages. Modifiche a Privacy Policy e Terms of Service devono mantenere il nome "Mr. Curiously" nei titoli H1 e il favicon `mrcuriously.png`.
 
 ## Variabili d'Ambiente Chiave
 ```
@@ -49,7 +49,8 @@ R2_ENDPOINT, R2_ACCESS_KEY, R2_SECRET_KEY, R2_BUCKET, R2_PUBLIC_URL
 TIKTOK_CLIENT_KEY, TIKTOK_CLIENT_SECRET, TIKTOK_ACCESS_TOKEN, TIKTOK_OPEN_ID
 ```
 
-## Stato Attuale (Maggio 2026)
-- ✅ Pipeline Instagram in produzione
-- ⏳ App TikTok Developer Portal in review (risubmessa dopo correzioni docs)
-- ❌ Token TikTok non ancora disponibili
+## Stato Attuale
+> Nota: questa sezione riflette lo stato al momento dell'ultimo aggiornamento e può essere obsoleta.
+- ✅ Pipeline Instagram in produzione (GitHub Actions cron affidabile)
+- ⏳ App TikTok Developer Portal in review (risubmessa il 22/05/2026 dopo correzioni docs)
+- ❌ Token TikTok non ancora ottenuti — secrets GitHub Actions TikTok non ancora configurati
