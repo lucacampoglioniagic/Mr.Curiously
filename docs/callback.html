@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Mr. Curiously — Authorization</title>
+    <link rel="icon" type="image/png" href="mrcuriously.png">
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 600px;
+            margin: 80px auto;
+            padding: 0 20px;
+            color: #222;
+            text-align: center;
+            background: #f9f9f9;
+        }
+
+        img {
+            width: 72px;
+            height: 72px;
+            border-radius: 16px;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            color: #0a1628;
+            font-size: 1.5em;
+        }
+
+        .code-box {
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 16px;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 0.9em;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        a {
+            color: #508cff;
+        }
+    </style>
+    <script>
+        window.onload = function () {
+            const params = new URLSearchParams(window.location.search);
+            const code = params.get('code');
+            const error = params.get('error');
+            const box = document.getElementById('result');
+            if (code) {
+                box.innerHTML = '<p>✅ Authorization successful. Copy this code and use it with <code>tiktok_oauth.py</code>:</p>'
+                    + '<div class="code-box">' + code + '</div>';
+            } else if (error) {
+                box.innerHTML = '<p>❌ Authorization failed: <strong>' + error + '</strong></p>';
+            } else {
+                box.innerHTML = '<p>No authorization code found in the URL.</p>';
+            }
+        };
+    </script>
+</head>
+
+<body>
+    <img src="mrcuriously.png" alt="Mr. Curiously logo">
+    <h1>Mr. Curiously — TikTok Authorization</h1>
+    <div id="result">
+        <p>Processing…</p>
+    </div>
+    <p><a href="index.html">← Back to homepage</a></p>
+</body>
+
+</html>

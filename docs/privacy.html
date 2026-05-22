@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Privacy Policy — Mr. Curiously</title>
+    <title>Mr. Curiously Privacy Policy</title>
+    <link rel="icon" type="image/png" href="mrcuriously.png">
     <style>
         body {
             font-family: sans-serif;
@@ -15,32 +16,110 @@
             line-height: 1.6
         }
 
+        header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 32px;
+            border-bottom: 2px solid #e8e8e8;
+            padding-bottom: 16px;
+        }
+
+        header img {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+        }
+
+        header span {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #0a1628;
+        }
+
         h1 {
-            color: #1a1a2e
+            color: #1a1a2e;
+            font-size: 1.8em;
+        }
+
+        h2 {
+            color: #0a1628;
+            margin-top: 1.8em;
+        }
+
+        a {
+            color: #508cff;
+        }
+
+        footer {
+            margin-top: 60px;
+            font-size: 0.85em;
+            color: #888;
+            border-top: 1px solid #e8e8e8;
+            padding-top: 16px;
         }
     </style>
 </head>
 
 <body>
-    <h1>Privacy Policy</h1>
+    <header>
+        <img src="mrcuriously.png" alt="Mr. Curiously logo">
+        <span>Mr. Curiously</span>
+    </header>
+
+    <h1>Mr. Curiously Privacy Policy</h1>
     <p><strong>Last updated:</strong> May 2026</p>
-    <p>Mr. Curiously ("the App") is an automated content publishing tool. This Privacy Policy explains how we handle
-        data.</p>
-    <h2>Data Collection</h2>
-    <p>The App does <strong>not</strong> collect, store, or process any personal data from end users or third parties.
-        It operates as a single-account automation tool owned and operated by its creator.</p>
-    <h2>TikTok and Instagram Integration</h2>
-    <p>The App uses OAuth tokens to publish content on behalf of a single, owner-controlled account. No user
-        authentication flow is exposed to third parties. Tokens are stored securely as environment variables and never
-        shared.</p>
-    <h2>Cookies</h2>
-    <p>This website does not use cookies.</p>
-    <h2>Changes</h2>
-    <p>We may update this policy from time to time. Changes will be reflected on this page.</p>
-    <h2>Contact</h2>
-    <p>For any questions, contact us via the GitHub repository: <a
-            href="https://github.com/lucacampoglioniagic/Mr.Curiously">github.com/lucacampoglioniagic/Mr.Curiously</a>
+
+    <p><strong>Mr. Curiously</strong> ("the App", "we", "us") is an automated social media content publishing
+        application. This Privacy Policy explains how Mr. Curiously handles data in connection with its services,
+        including its integration with TikTok and Instagram.</p>
+
+    <h2>1. Data Collection</h2>
+    <p>Mr. Curiously does <strong>not</strong> collect, store, or process any personal data from end users or
+        third parties. The App operates as a single-account automation tool owned and operated solely by its
+        creator. No user registration, sign-up, or personal information submission is required or possible.</p>
+
+    <h2>2. TikTok and Instagram Integration</h2>
+    <p>Mr. Curiously uses OAuth 2.0 tokens to publish content on behalf of a single, owner-controlled TikTok and
+        Instagram account. The authorization flow (e.g., "Connect with TikTok") is available on our website and
+        is used exclusively by the App owner to grant Mr. Curiously permission to post content. No third-party
+        users are asked to authenticate or share their credentials. OAuth tokens are stored securely as encrypted
+        environment variables and are never shared with any third party.</p>
+
+    <h2>3. Content Posting API</h2>
+    <p>Mr. Curiously uses the TikTok Content Posting API to automatically publish short-form video content to a
+        single TikTok creator account. The App accesses only the permissions required for content publishing
+        (video upload and post creation). No data is read from TikTok users' accounts beyond what is strictly
+        necessary for authentication confirmation.</p>
+
+    <h2>4. Cookies and Tracking</h2>
+    <p>This website does not use cookies, tracking pixels, or any form of user analytics.</p>
+
+    <h2>5. Third-Party Services</h2>
+    <p>Mr. Curiously interacts with the following third-party APIs:</p>
+    <ul>
+        <li><strong>TikTok</strong> – Content Posting API for video publishing</li>
+        <li><strong>Instagram (Meta)</strong> – Graph API for image and reel publishing</li>
+        <li><strong>OpenAI / Anthropic</strong> – AI language models for caption generation</li>
+        <li><strong>Cloudflare R2</strong> – Cloud storage for media assets</li>
+    </ul>
+    <p>Each third-party service is governed by its own privacy policy and terms of service.</p>
+
+    <h2>6. Data Security</h2>
+    <p>All API credentials and access tokens used by Mr. Curiously are stored as encrypted environment secrets
+        (e.g., GitHub Actions Secrets) and are never exposed in source code or logs.</p>
+
+    <h2>7. Changes to This Policy</h2>
+    <p>We may update this Privacy Policy from time to time. All changes will be reflected on this page with an
+        updated date.</p>
+
+    <h2>8. Contact</h2>
+    <p>For any questions regarding this Privacy Policy or Mr. Curiously, contact us via the GitHub repository:
+        <a href="https://github.com/lucacampoglioniagic/Mr.Curiously">github.com/lucacampoglioniagic/Mr.Curiously</a>
     </p>
+
+    <footer>Mr. Curiously &copy; 2026 &mdash; <a href="index.html">Home</a> &middot; <a href="terms.html">Terms of
+            Service</a></footer>
 </body>
 
 </html>

@@ -5,52 +5,154 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Mr. Curiously — Daily Curiosity Facts</title>
+  <link rel="icon" type="image/png" href="mrcuriously.png">
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: sans-serif;
       max-width: 700px;
-      margin: 60px auto;
-      padding: 0 20px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
       color: #222;
       line-height: 1.7;
       background: #f9f9f9
     }
 
-    h1 {
+    header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 32px 0 20px;
+      border-bottom: 2px solid #e8e8e8;
+      margin-bottom: 36px;
+    }
+
+    header img {
+      width: 64px;
+      height: 64px;
+      border-radius: 14px;
+    }
+
+    header .brand h1 {
+      margin: 0;
+      font-size: 1.9em;
       color: #0a1628;
-      font-size: 2em
+    }
+
+    header .brand p {
+      margin: 2px 0 0;
+      color: #555;
+      font-size: 0.95em;
     }
 
     .accent {
       color: #508cff
     }
 
+    section {
+      background: #fff;
+      border: 1px solid #e4e4e4;
+      border-radius: 12px;
+      padding: 24px 28px;
+      margin-bottom: 24px;
+    }
+
+    section h2 {
+      margin-top: 0;
+      color: #0a1628;
+      font-size: 1.15em;
+    }
+
+    .btn {
+      display: inline-block;
+      background: #010101;
+      color: #fff;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      margin-top: 12px;
+    }
+
+    .btn:hover {
+      background: #333;
+    }
+
+    .btn-tiktok {
+      background: #fe2c55;
+    }
+
+    .btn-tiktok:hover {
+      background: #d41f45;
+    }
+
     a {
       color: #508cff
     }
 
+    .links {
+      list-style: none;
+      padding: 0;
+    }
+
+    .links li {
+      margin: 6px 0;
+    }
+
     footer {
-      margin-top: 60px;
+      margin-top: 40px;
       font-size: 0.85em;
-      color: #888
+      color: #888;
+      border-top: 1px solid #e8e8e8;
+      padding-top: 16px;
     }
   </style>
 </head>
 
 <body>
-  <h1>Mr. <span class="accent">Curiously</span></h1>
-  <p>A daily automated publisher of curious facts about science, history, nature, and space.</p>
-  <p>Every day, Mr. Curiously generates a fascinating fact, creates a branded image and video, and publishes them
-    automatically to Instagram and TikTok.</p>
-  <ul>
-    <li><a href="https://www.instagram.com/mr.curiously" target="_blank">Follow on Instagram</a></li>
-    <li><a href="https://github.com/lucacampoglioniagic/Mr.Curiously" target="_blank">View on GitHub</a></li>
-  </ul>
-  <hr>
-  <ul>
-    <li><a href="terms.html">Terms of Service</a></li>
-    <li><a href="privacy.html">Privacy Policy</a></li>
-  </ul>
+  <header>
+    <img src="mrcuriously.png" alt="Mr. Curiously logo">
+    <div class="brand">
+      <h1>Mr. <span class="accent">Curiously</span></h1>
+      <p>Daily automated publisher of curious facts</p>
+    </div>
+  </header>
+
+  <section>
+    <h2>About</h2>
+    <p>Mr. Curiously is a fully automated application that publishes one curious fact every day about science,
+      history, nature, and space. It generates AI-powered captions, branded images, and short-form videos,
+      then publishes them automatically to Instagram and TikTok.</p>
+    <ul class="links">
+      <li>📸 <a href="https://www.instagram.com/mr.curiously" target="_blank">Follow on Instagram @mr.curiously</a></li>
+      <li>💻 <a href="https://github.com/lucacampoglioniagic/Mr.Curiously" target="_blank">View source on GitHub</a>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔗 Connect with TikTok</h2>
+    <p>To authorize Mr. Curiously to publish content on a TikTok account, the account owner must complete the
+      login process below. This initiates the TikTok OAuth 2.0 authorization flow, allowing Mr. Curiously to
+      post videos on your behalf using the TikTok Content Posting API.</p>
+    <p><strong>Note:</strong> This authorization is intended solely for the App owner/operator.</p>
+    <a class="btn btn-tiktok"
+      href="https://www.tiktok.com/v2/auth/authorize/?client_key=awww7dzsi0qyfjcg&scope=user.info.basic,video.publish,video.upload&response_type=code&redirect_uri=https%3A%2F%2Flucacampoglioniagic.github.io%2FMr.Curiously%2Fcallback.html&state=mrcuriously_auth">
+      Connect with TikTok
+    </a>
+  </section>
+
+  <section>
+    <h2>Legal</h2>
+    <ul class="links">
+      <li><a href="terms.html">Terms of Service</a></li>
+      <li><a href="privacy.html">Privacy Policy</a></li>
+    </ul>
+  </section>
+
   <footer>Mr. Curiously &copy; 2026</footer>
 </body>
 
