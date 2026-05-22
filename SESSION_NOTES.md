@@ -78,3 +78,59 @@
 2. **Post-approvazione TikTok**: completare OAuth, aggiungere secrets GitHub Actions, testare pipeline completa
 
 ---
+
+## Session 2026-05-22
+
+### What was done
+- **Cron GitHub Actions confermato autonomo** ✅ — la seconda esecuzione schedulata è partita automaticamente alle 09:00 UTC; il dubbio della sessione precedente è risolto
+- Ricevuta email di rifiuto da TikTok Developer Review con le seguenti richieste:
+  - App icon visibile come favicon e in header su Privacy Policy e Terms of Service
+  - Titoli H1 che includano il nome app ("Mr. Curiously Privacy Policy" / "Mr. Curiously Terms of Service")
+  - Privacy Policy e Terms of Service insufficienti (non menzionavano l'app per nome)
+  - Nessun login entry point sul sito
+  - Website non sufficientemente sviluppato
+- Applicate tutte le correzioni al sito `docs/`:
+  - `index.html` ridisegnato come sito multi-sezione con header con logo
+  - Aggiunto bottone **"Connect with TikTok"** (OAuth entry point) con `client_key=awww7dzsi0qyfjcg`
+  - Aggiunta `callback.html` per gestire il redirect OAuth di TikTok (mostra il codice di autorizzazione)
+  - `privacy.html` riscritta con 8 sezioni dettagliate che menzionano l'app per nome
+  - `terms.html` riscritta con 10 sezioni (disclaimer, limitazioni, piattaforme terze)
+  - Favicon `mrcuriously.png` aggiunta a tutte le pagine
+  - Header con logo e nome app su tutte le pagine
+- App TikTok **risubmessa in review** (22/05/2026)
+- Aggiunta label AI obbligatoria su TikTok: `ai_generated_content: True` in `tiktok.py`
+- Aggiunta label AI su Instagram: hashtag `#AIGenerated` in `caption.py` via `full_caption`
+- Creato `.github/copilot-instructions.md` per contesto automatico nelle sessioni future
+
+### Decisions made
+- **Redirect URI stabile su GitHub Pages** (`callback.html`) — eliminata la dipendenza da ngrok per il flusso OAuth; l'URL è permanente e non cambia
+- **`#AIGenerated` in `full_caption`** — si applica a tutti i post (mock e LLM) senza duplicare logica
+- **`ai_generated_content: True` sempre attivo** in TikTok publisher — obbligatorio per policy, nessun motivo per renderlo configurabile
+
+### Current status
+- ✅ Pipeline Instagram in produzione e affidabile (cron GitHub Actions confermato)
+- ✅ Publisher TikTok completo con label AI
+- ✅ Sito docs corretto e risubmesso per review TikTok
+- ✅ Redirect OAuth stabile su GitHub Pages
+- ⏳ App TikTok in review (seconda submission 22/05/2026)
+- ❌ `TIKTOK_ACCESS_TOKEN` e `TIKTOK_OPEN_ID` non ancora ottenuti
+- ❌ GitHub Actions secrets TikTok non ancora configurati
+
+### Next steps
+1. **Attendere approvazione TikTok** (1–7 giorni lavorativi)
+2. **Post-approvazione**: cliccare "Connect with TikTok" su GitHub Pages → completare OAuth → copiare token dal `callback.html`
+3. **Aggiungere secrets GitHub Actions**: `TIKTOK_CLIENT_KEY`, `TIKTOK_CLIENT_SECRET`, `TIKTOK_ACCESS_TOKEN`, `TIKTOK_OPEN_ID`
+4. **Testare pipeline TikTok**: `python -m src.cli test-tiktok`
+5. **Future**: implementare refresh token automatico (il token TikTok scade periodicamente)
+
+### Files changed
+- `docs/index.html` — ridisegnato: header con logo, sezione About, bottone "Connect with TikTok", sezione Legal
+- `docs/privacy.html` — riscritta: 8 sezioni, favicon, header con logo, titolo H1 corretto
+- `docs/terms.html` — riscritta: 10 sezioni, favicon, header con logo, titolo H1 corretto
+- `docs/callback.html` — **CREATO**: gestisce redirect OAuth TikTok, mostra authorization code
+- `docs/mrcuriously.png` — aggiunto in `docs/` per favicon e header
+- `src/publishers/tiktok.py` — aggiunto `ai_generated_content: True` in `post_info`
+- `src/generators/caption.py` — `full_caption` aggiunge `#AIGenerated` a ogni post
+- `.github/copilot-instructions.md` — **CREATO**: contesto progetto per sessioni future
+
+---

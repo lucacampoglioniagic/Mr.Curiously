@@ -1,11 +1,11 @@
 # Mr. Curiously — Auto Content Publisher
 
 Pipeline automatica che ogni giorno:
-1. Genera un "fatto curioso" con LLM (caption + hashtag)
-2. Genera un'immagine 1080×1080 (Pillow branded o DALL-E 3)
+1. Genera un "fatto curioso" con LLM (caption + hashtag + `#AIGenerated`)
+2. Genera un'immagine 1080×1080 (Pillow branded o DALL-E 3) + video 1080×1920 (typewriter TikTok)
 3. Carica il media su Cloudflare R2
 4. Pubblica su Instagram
-5. *(in arrivo)* Pubblica su TikTok
+5. Pubblica su TikTok *(token in attesa di approvazione app)*
 
 ## Setup
 
@@ -39,6 +39,8 @@ python -m src.cli test-instagram
 | `IG_USERNAME` | ⬜ | Handle Instagram (usato solo nel log) |
 | `OPENAI_API_KEY` | ⬜ | Abilita caption GPT-4o-mini + immagini DALL-E 3 |
 | `ANTHROPIC_API_KEY` | ⬜ | Fallback caption con Claude Haiku |
+| `META_APP_ID` | ⬜ | App ID Meta (usato dal workflow CI) |
+| `META_APP_SECRET` | ⬜ | App secret Meta (usato dal workflow CI) |
 | `TIKTOK_CLIENT_KEY` | ⬜ | App key TikTok Developer Portal |
 | `TIKTOK_CLIENT_SECRET` | ⬜ | App secret TikTok Developer Portal |
 | `TIKTOK_ACCESS_TOKEN` | ⬜ | Token OAuth TikTok (ottenuto via `tiktok_oauth.py`) |
@@ -49,6 +51,9 @@ python -m src.cli test-instagram
 ## Comandi CLI
 
 ```bash
+# Genera il video TikTok (test locale)
+python -m src.cli test-video
+
 # Pubblica un post reale (pipeline completa)
 python -m src.cli run
 
@@ -73,18 +78,20 @@ python -m src.cli profile-image
 ```
 src/
   config.py              # carica .env, espone Config tipizzato
-  cli.py                 # comandi Click (run, dry-run, test-instagram, schedule, profile-image)
+  cli.py                 # comandi Click (run, dry-run, test-instagram, test-tiktok, test-video, schedule, profile-image)
   generators/
-    caption.py           # genera fatto + caption + hashtag via LLM (pool mock se no API key)
-    image.py             # genera immagine post (Pillow branded o DALL-E 3)
-    profile.py           # genera immagine profilo Instagram 1080x1080
+    caption.py           # genera fatto + caption + hashtag via LLM; aggiunge #AIGenerated a tutti i post
+    image.py             # genera immagine post 1080×1080 (Pillow branded o DALL-E 3)
+    video.py             # genera video TikTok 1080×1920 con effetto typewriter (MoviePy)
+    profile.py           # genera immagine profilo Instagram 1080×1080
   publishers/
     instagram.py         # pubblica su Instagram via Graph API v21.0
+    tiktok.py            # pubblica su TikTok via Content Posting API v2 (ai_generated_content: true)
   storage/
     r2.py                # upload su Cloudflare R2
     history.py           # storico pubblicazioni su R2 (history/published.json)
   scheduler/
-    daily.py             # pipeline 4-step + scheduler giornaliero
+    daily.py             # pipeline 5-step + scheduler giornaliero
 ```
 
 ## Anti-ripetizione
@@ -116,9 +123,22 @@ Il renderer Pillow usa font di sistema (Arial su Windows, DejaVu/Liberation su L
 
 ---
 
+## Etichette AI (Policy compliance)
+
+Tutti i contenuti pubblicati da Mr. Curiously includono etichette AI obbligatorie:
+
+- **Instagram**: hashtag `#AIGenerated` aggiunto automaticamente a ogni caption (via `full_caption` in `caption.py`)
+- **TikTok**: campo `ai_generated_content: true` incluso nel payload dell'API Content Posting (via `tiktok.py`)
+
+Questo è richiesto dalle policy di entrambe le piattaforme per contenuti generati o modificati con AI.
+
+---
+
 ## TikTok Setup
 
-> **Stato attuale: App in review ⏳** — in attesa di approvazione TikTok (1–7 giorni lavorativi).
+> **Stato attuale: App risubmessa in review ⏳** — seconda submission il 22/05/2026 dopo correzioni al sito `docs/` (richieste dal reviewer TikTok). In attesa di approvazione (1–7 giorni lavorativi).
+
+> **Nota**: il redirect URI è ora stabile su GitHub Pages (`https://lucacampoglioniagic.github.io/Mr.Curiously/callback.html`) — non è più necessario ngrok per il flusso OAuth.
 
 ### Come funziona il flusso OAuth
 
@@ -133,21 +153,19 @@ Lo script `tiktok_oauth.py` implementa un server locale OAuth su **porta 8080** 
 ```bash
 # 1. Assicurarsi che TIKTOK_CLIENT_KEY e TIKTOK_CLIENT_SECRET siano nel .env
 
-# 2. Avviare ngrok per creare un tunnel HTTPS verso localhost:8080
-ngrok http 8080
-# Copiare l'URL HTTPS generato (es. https://xxxx.ngrok-free.dev)
+# 2. Aprire la homepage del sito e cliccare "Connect with TikTok"
+#    https://lucacampoglioniagic.github.io/Mr.Curiously/
+#    → TikTok reindirizza su callback.html con il codice di autorizzazione
 
-# 3. Aggiornare REDIRECT_URI in tiktok_oauth.py con il nuovo URL ngrok
-#    Aggiungere lo stesso URL nel TikTok Developer Portal → Login Kit → Redirect URIs
-
-# 4. Avviare il server OAuth
+# 3. In alternativa, avviare il server OAuth locale (usa ngrok se il redirect URI è localhost)
 python tiktok_oauth.py
 
-# 5. Aprire http://localhost:8080 nel browser e completare il flusso
+# 4. Completare il flusso nel browser
 # → TIKTOK_ACCESS_TOKEN e TIKTOK_OPEN_ID vengono salvati automaticamente nel .env
 ```
 
-> ⚠️ **Nota ngrok free**: l'URL HTTPS cambia ad ogni riavvio di ngrok. Per un redirect URI stabile, considera ngrok a pagamento o un dominio fisso.
+> ⚠️ Il redirect URI stabile è `https://lucacampoglioniagic.github.io/Mr.Curiously/callback.html` (GitHub Pages).
+> Se si usa `tiktok_oauth.py` in locale, aggiornare il redirect URI nel Developer Portal con l'URL ngrok corrente.
 
 ### Secrets GitHub Actions da aggiungere
 
